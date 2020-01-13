@@ -48,7 +48,7 @@ def getQuestionAnswers(questionText):
     answerText = re.search("(A\..*\sB\.[\S\s]+)", questionText).group(1).strip()
 
     # Create array from input by splitting by new lines
-    answerText = answerText.split('\n')
+    answerText = answerText.split('\r\n')
 
     # Holder lists for output
     answers = []
@@ -59,8 +59,9 @@ def getQuestionAnswers(questionText):
         # Get answer text by finding answer letter, answer text, and, critically
         # by not allowing the asterisk to be in the question text through [^*]
         # but still capturing it -- if it exists -- through \*?
-        answers.append(re.search("[A-D]\.\s?(.*[^*])\*?$", x).group(1).strip())
-        if x.endswith("*"):
+        answers.append(re.search("[A-D]\.[\s\t]?(.*[^*])\*?$", x).group(1).strip())
+
+        if "*" in x:
             pcts.append("100")
         else:
             pcts.append("0")
@@ -75,7 +76,7 @@ if __name__ == '__main__':
     output.write(moodlexmlconstants.XML_QUIZ_BEGINNING)
 
     # set input file name by CLI, otherwise default to output.txt
-    if (sys.argv[1] == ""):
+    if (len(sys.argv[1]) <= 1):
         inputName = "input.txt"
     else:
         inputName = sys.argv[1]
